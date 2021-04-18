@@ -1,7 +1,5 @@
 package cn.albert.crud.bean;
 
-import com.github.pagehelper.PageInfo;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,7 +54,7 @@ public class Msg {
         this.ex = ex;
     }
 
-    public Msg add(String pageInfo, PageInfo page) {
+    public Msg add(String pageInfo, Object page) {
         this.getEx().put(pageInfo,page);
         return this;
     }
