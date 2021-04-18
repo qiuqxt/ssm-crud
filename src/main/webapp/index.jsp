@@ -29,9 +29,14 @@
     <script type="text/javascript">
         //1.页面加载完成以后，直接去发送一个ajax请求，要到分页数据
         $(function () {
+            // 去首页
+            to_page(1);
+        });
+
+        function to_page(pn) {
             $.ajax({
                 url:"<%=basePath%>"+"emps/",
-                data:"pn=1",
+                data:"pn="+pn,
                 dataType:"json",
                 type:"get",
                 success:function (data) {
@@ -44,14 +49,14 @@
                     build_page_info(data);
                     //3.解析显示分页条信息
                     build_page_nav(data);
-
                 }
-
             })
-
-        });
+        }
 
         function build_emps_table(result) {
+            // 清空table表格
+            $("#bodyBtn").empty();
+
             var emps = result.ex.pageInfo.list;
             $.each(emps, function (i,n) {
 
@@ -91,13 +96,19 @@
 
         // 解析显示分页信息
         function build_page_info(result){
+            // 清空
+            $("#page_info_area").empty();
+
             $("#page_info_area").append("当前"+result.ex.pageInfo.pageNum+"页" +
                 ", 总"+result.ex.pageInfo.pages+"页," +
                 " 总"+result.ex.pageInfo.total+"记录");
         }
 
-        // 解析显示分页条
+        // 解析显示分页条，点击分页要能去下一页
         function build_page_nav(result) {
+            // 清空
+            $("#page_nav_area").empty();
+
             //page_nav_area
 
             var nav = $("<nav></nav>").attr("aria-label","Page navigation");
@@ -106,9 +117,34 @@
 
             var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","#"));
             var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+            if (result.ex.pageInfo.hasPreviousPage==false){
+                firstPageLi.addClass("disabled");
+                prePageLi.addClass("disabled");
+            }
+
+            // 为首页和前一页绑定单击事件
+            firstPageLi.click(function () {
+                to_page(1);
+            });
+            prePageLi.click(function () {
+                to_page(result.ex.pageInfo.pageNum-1);
+
+            });
 
             var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
             var lastPageLi = $("<li></li>").append($("<a></a>").append("尾页").attr("href","#"));
+            if (result.ex.pageInfo.hasNextPage==false){
+                lastPageLi.addClass("disabled");
+                nextPageLi.addClass("disabled");
+            }
+            // 为尾页和后一页绑定单击事件
+            lastPageLi.click(function () {
+                to_page(result.ex.pageInfo.pages);
+            });
+            nextPageLi.click(function () {
+                to_page(result.ex.pageInfo.pageNum+1);
+
+            });
 
             // 添加首页和前一页的提示
             ul.append(firstPageLi).append(prePageLi);
@@ -117,6 +153,13 @@
             $.each(result.ex.pageInfo.navigatepageNums, function (i,n) {
                 var numLi = $("<li></li>").append($("<a></a>").append(n));
 
+                if (result.ex.pageInfo.pageNum == n){
+                    numLi.addClass("active");
+                }
+                numLi.click(function () {
+                    to_page(n)
+
+                })
                 ul.append(numLi);
             });
 
