@@ -1,3 +1,5 @@
+项目描述：SSM整合案例，使用浏览器请求访问，来对资源进行CRUD。
+
 # 功能点
 
  1. 分页
@@ -45,3 +47,29 @@ maven的settings.xml文件配置：
 </mirrors>
 ```
 ---
+# 查询
+1. 访问index.jsp页面
+2. index.jsp页面发送出查询员工列表请求
+3. EmployeeController来接收请求，查出员工数据
+4. 来到list.jsp页面进行展示
+5. 使用PageHelper进行分页查询
+	- 引入jar包；
+	- 在mybatis中配置
+	- 在controller对应Controller中引入
+
+- URI： /emps
+
+---
+查询-ajax
+1. indexl.jsp页面直接发送ajax请求进行员工分页数据的查询
+2. 服务器将查出的数据，以json字符串的形式返回给浏览器
+3. 浏览器收到js字符串，可以使用js对json进行解析，使用js通过dom增删改来改变页面。
+4. 返回json。实现客户端的无关性。
+
+---
+
+新增-逻辑
+1. 在index.jsp页面点击“新增”
+2. 弹出新增对话框
+3. 去数据库查询部门列表，显示在对话框中
+4. 用户输入数据完成保存
