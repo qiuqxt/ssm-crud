@@ -27,12 +27,13 @@
 
 
     <script type="text/javascript">
+
+        var totalRecord;
+
         //1.页面加载完成以后，直接去发送一个ajax请求，要到分页数据
         $(function () {
-
             // 去首页
             to_page(1);
-
 
             //点击新增按钮弹出模态框
             $("#emp_add_modal_btn").click(function () {
@@ -45,12 +46,46 @@
 
             });
 
+
+            //保存按钮
+            $("#emp_save_btn").click(function () {
+                //1.模态框中填写的表单数据提交给服务器进行保存
+
+                //表单序列化
+                //alert($("#empAddModal form").serialize());
+
+                // 发送ajax请求保存员工
+                $.ajax( {
+                    url:"<%=basePath%>"+"emp",
+                        type:"post",
+                        data: $("#empAddModal form").serialize(),
+                        dataType:"json",
+
+                        success:function( data ) {
+                            // data 就是responseText, 是jquery处理后的数据。
+
+                            //员工保存成功
+                            alert(data.msg);
+                            // 1.关闭模态窗口
+                            $('#empAddModal').modal('hide');
+                            // 清空模态窗口内容
+                            $("#emp_add_form")[0].reset();
+
+                            // 2.来到最后一页，显示刚才保存的数据
+                            // 发送ajax请求显示最后一页数据即可
+                            to_page(totalRecord);
+                        }
+                    })
+
+
+            })
+
         });
 
         // 查出所有的部门信息并显示在下拉列表中
         function getDepts() {
             $.ajax( {
-                url:"<%=basePath%>"+"depts/",
+                url:"<%=basePath%>"+"/depts",
                 dataType:"json",
                 type:"get",
                 success:function( data ) {
@@ -76,10 +111,9 @@
 
         }
 
-
         function to_page(pn) {
             $.ajax({
-                url:"<%=basePath%>"+"emps/",
+                url:"<%=basePath%>"+"emps",
                 data:"pn="+pn,
                 dataType:"json",
                 type:"get",
@@ -146,6 +180,8 @@
             $("#page_info_area").append("当前"+result.ex.pageInfo.pageNum+"页" +
                 ", 总"+result.ex.pageInfo.pages+"页," +
                 " 总"+result.ex.pageInfo.total+"记录");
+
+            totalRecord = result.ex.pageInfo.total;
         }
 
         // 解析显示分页条，点击分页要能去下一页
@@ -235,7 +271,7 @@
                 </div>
                 <div class="modal-body">
 
-                    <form class="form-horizontal">
+                    <form class="form-horizontal" id="emp_add_form">
                         <div class="form-group">
                             <label class="col-sm-2 control-label">empName</label>
                             <div class="col-sm-10">
@@ -272,7 +308,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="button" class="btn btn-primary">保存</button>
+                    <button type="button" class="btn btn-primary" id="emp_save_btn">保存</button>
                 </div>
             </div>
         </div>
