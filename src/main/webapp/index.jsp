@@ -41,9 +41,9 @@
                     //1.解析并显示员工数据
                     build_emps_table(data);
                     //2.解析并显示分页信息
-                    build_page_info(result);
+                    build_page_info(data);
                     //3.解析显示分页条信息
-                    build_page_nav(result);
+                    build_page_nav(data);
 
                 }
 
@@ -89,11 +89,44 @@
             })
         }
 
+        // 解析显示分页信息
         function build_page_info(result){
-
+            $("#page_info_area").append("当前"+result.ex.pageInfo.pageNum+"页" +
+                ", 总"+result.ex.pageInfo.pages+"页," +
+                " 总"+result.ex.pageInfo.total+"记录");
         }
-        function build_page_nav(result) {
 
+        // 解析显示分页条
+        function build_page_nav(result) {
+            //page_nav_area
+
+            var nav = $("<nav></nav>").attr("aria-label","Page navigation");
+
+            var ul = $("<ul></ul>").addClass("pagination");
+
+            var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","#"));
+            var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+
+            var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
+            var lastPageLi = $("<li></li>").append($("<a></a>").append("尾页").attr("href","#"));
+
+            // 添加首页和前一页的提示
+            ul.append(firstPageLi).append(prePageLi);
+
+            //1,2,3,4,5 遍历给ul中标签添加页面提示
+            $.each(result.ex.pageInfo.navigatepageNums, function (i,n) {
+                var numLi = $("<li></li>").append($("<a></a>").append(n));
+
+                ul.append(numLi);
+            });
+
+            // 添加下一页和末页的提示
+            ul.append().append(nextPageLi).append(lastPageLi);
+
+            // 将ul并入到nav中
+            nav.append(ul);
+
+            nav.appendTo($("#page_nav_area"));
         }
 
     </script>
@@ -144,11 +177,11 @@
     <!--显示分页信息-->
     <div class="row">
         <!--分页文字信息-->
-        <div class="col-md-6">
-            当前 页，总 页，总 记录
+        <div class="col-md-6" id="page_info_area">
+
         </div>
         <!--分页条信息-->
-        <div class="col-md-6">
+        <div class="col-md-6" id="page_nav_area">
 
 
         </div>
