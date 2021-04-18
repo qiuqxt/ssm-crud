@@ -33,8 +33,12 @@
             // 去首页
             to_page(1);
 
-            //打开员工新增的模态窗口
+
+            //点击新增按钮弹出模态框
             $("#emp_add_modal_btn").click(function () {
+                getDepts();
+
+                //打开员工新增的模态窗口
                 $('#empAddModal').modal({
                     backdrop:"static"
                 });
@@ -42,6 +46,35 @@
             });
 
         });
+
+        // 查出所有的部门信息并显示在下拉列表中
+        function getDepts() {
+            $.ajax( {
+                url:"<%=basePath%>"+"depts/",
+                dataType:"json",
+                type:"get",
+                success:function( data ) {
+                    /*
+                    {"code":100,"msg":"处理成功","ex":{"depts":[{"deptId":1,"deptName":"开发部"},{"deptId":2,"deptName":"测试部"}]}}
+                     */
+                    //console.log(data);
+
+                    // 显示部门信息，在下拉列表中
+                    // $("#dept_select")
+                    // 先清空
+                    $("#dept_select").empty();
+
+                    $.each(data.ex.depts, function (i,n) {
+                        var option = $("<option value='"+n.deptId+"'></option>").append(n.deptName);
+                        option.appendTo($("#dept_select"))
+
+                    })
+                }
+                }
+            )
+
+
+        }
 
 
         function to_page(pn) {
@@ -230,7 +263,7 @@
                             <label class="col-sm-2 control-label">deptName</label>
                             <div class="col-sm-5">
                                 <!--部门提交部门id即可-->
-                                <select class="form-control" name="dId"></select>
+                                <select class="form-control" name="dId" id="dept_select"></select>
                             </div>
                         </div>
 
