@@ -39,8 +39,11 @@
                     // alert(data.msg)
 
                     //1.解析并显示员工数据
-                    build_emps_table(data)
+                    build_emps_table(data);
                     //2.解析并显示分页信息
+                    build_page_info(result);
+                    //3.解析显示分页条信息
+                    build_page_nav(result);
 
                 }
 
@@ -86,6 +89,9 @@
             })
         }
 
+        function build_page_info(result){
+
+        }
         function build_page_nav(result) {
 
         }
