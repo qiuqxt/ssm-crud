@@ -1,6 +1,7 @@
 package cn.albert.crud.service;
 
 import cn.albert.crud.bean.Employee;
+import cn.albert.crud.bean.EmployeeExample;
 import cn.albert.crud.dao.EmployeeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,5 +24,20 @@ public class EmployeeService {
 
     public void saveEmp(Employee employee) {
         employeeMapper.insertSelective(employee);
+    }
+
+    /**
+     * 校验用户名是否可用
+     * @param empName
+     * @return true: 代表当前姓名用户可用，
+     */
+
+    public boolean checkUser(String empName) {
+        EmployeeExample example = new EmployeeExample();
+        EmployeeExample.Criteria criteria = example.createCriteria();
+        criteria.andEmpNameEqualTo(empName);
+
+        long count = employeeMapper.countByExample(example);
+        return count==0;
     }
 }
