@@ -26,8 +26,22 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+
     /**
-     *
+     * 员工更新方法
+     * @param employee
+     * @return
+     */
+    @RequestMapping(value = "/emp/{empId}", method = RequestMethod.PUT)
+    @ResponseBody
+    public Msg updateEmp(Employee employee){
+
+        employeeService.updateEmp(employee);
+
+        return Msg.success();
+    }
+    /**
+     * 根据id查询员工
      */
     @RequestMapping(value = "/emp/{id}",method = RequestMethod.GET)
     @ResponseBody
