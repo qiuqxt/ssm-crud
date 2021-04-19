@@ -26,8 +26,43 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+    @RequestMapping(value = "/emp/{empId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public Msg deleteEmp(@PathVariable("empId") Integer id){
+
+        employeeService.deleteEmp(id);
+
+        return Msg.success();
+    }
 
     /**
+     * 如果直接发送ajax=PUT形式的请求，
+     * 封装的数据
+     * Employee
+     * [empId=1028, empName=null, gender=null, email=null, dId=null]
+     *
+     * 问题：
+     *  请求体中有数据，但是Employee对象封装不上
+     *
+     * 原因：
+     *  Tomcat：
+     *      1、请求体中的数据，封装一个map。
+     *      2、request.getParameter("empName")就会从这个map中取值。
+     *      3、SpringMVC封装POJO对象的时候
+     *          会把POJO中每个属性的值，request.getParameter("email");
+     *
+     * Ajax发送PUT请求引发的血案：
+     *      PUT请求，请求体中的数据，request.getParameter("empName")拿不到
+     *      Tomcat一看是PUT请求，便不会封装请求体重的数据为map，只有POST形式的请求才封装请求体为map
+     *
+     *
+     * 解决方案：
+     * 我们要 能支持直接发送PUT之类的请求，还要封装请求体中的数据
+     *  1、配置上HttpPutFormContentFilter
+     *  2、作用：将请求体中的数据解析包装成一个map
+     *  3、request被重新包装，request.getParameter()被重写，就会从自己封装的map中获取数据
+     *
+     *
      * 员工更新方法
      * @param employee
      * @return
