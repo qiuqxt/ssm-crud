@@ -206,7 +206,7 @@
             // 单个删除
             $(document).on("click",".delete_btn", function () {
                 // 1.弹出是否确认删除对话框
-                var empName = $(this).parents("tr").find("td:eq(1)").text();
+                var empName = $(this).parents("tr").find("td:eq(2)").text();
                 var empId = $(this).attr("delete-id");
                 if (confirm("确认删除【"+empName+"】")){
 
@@ -222,7 +222,67 @@
                     })
                 }
 
+            });
+
+
+            // 完成全选/全不选功能
+            $("#check_all").click(function () {
+                /**
+                 * attr获取checked是undefined，推荐自定义的属性用attr获取值;
+                 * 像这些原生的dom属性，推荐不用attr获取值，使用prop获取值;
+                 * prop修改和读取dom原生属性的值
+                 */
+                // alert($(this).prop("checked"));
+                $(".check_item").prop("checked", $(this).prop("checked"));
+
             })
+
+            // check_item
+            $(document).on("click", ".check_item", function () {
+                // 判断当前页选中的元素，是否已经被选满
+                if($(".check_item:checked").length==$(".check_item").length){
+                    $("#check_all").prop("checked", true);
+                }
+            })
+
+
+            // 批量删除
+            $("#emp_delete_all_btn").click(function () {
+
+                var empNames = "";
+                var del_ids = "";
+
+                $.each($(".check_item:checked"), function () {
+                    // 员工姓名字符串
+                    empNames += $(this).parents("tr").find("td:eq(2)").text() + ",";
+                    // 员工id字符串
+                    del_ids += $(this).parents("tr").find("td:eq(1)").text() + "-";
+
+                });
+
+                // 去除多余的“，”号
+                empNames = empNames.substring(0, empNames.length-1);
+                del_ids = del_ids.substring(0, del_ids.length-1);
+
+                alert(del_ids);
+
+                if (confirm("确认删除："+empNames+" 吗?")){
+                    // 发送ajax请求
+                    $.ajax( {
+                            url:"<%=basePath%>"+"emp/"+del_ids,
+                            type:"delete",
+                            success:function( data ) {
+                                // data 就是responseText, 是jquery处理后的数据。
+                                alert(data.msg);
+
+                                // 回到当前页面
+                                to_page(currentPage);
+                            }
+                    });
+                }
+
+            });
+
 
 
 
@@ -361,6 +421,8 @@
             var emps = result.ex.pageInfo.list;
             $.each(emps, function (i,n) {
 
+                var checkBoxId = $("<td></td>").append($("<input type='checkbox' class='check_item'/>"));
+
                 var empIdTd = $("<td></td>").append(n.empId);
                 var empNameTd = $("<td></td>").append(n.empName);
                 var genderTd = $("<td></td>").append(n.gender=='M'?"男":"女");
@@ -389,7 +451,8 @@
                 var btnTd = $("<td></td>").append(editBtn).append(" ").append(deleteBtn);
 
                 // append方法执行完成以后还是返回原来的元素
-                $("<tr></tr>").append(empIdTd)
+                $("<tr></tr>").append(checkBoxId)
+                    .append(empIdTd)
                     .append(empNameTd)
                     .append(genderTd)
                     .append(emailTd)
@@ -613,7 +676,7 @@
         <div class="row">
             <div class="col-md-4 col-md-offset-8">
                 <button type="button" class="btn btn-primary" id="emp_add_modal_btn">新增</button>
-                <button class="btn btn-danger">删除</button>
+                <button class="btn btn-danger" id="emp_delete_all_btn">删除</button>
             </div>
         </div>
         <!--显示表格数据-->
@@ -622,6 +685,9 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th>
+                                <input type="checkbox" id="check_all"/>
+                            </th>
                             <th>#</th>
                             <th>empName</th>
                             <th>gender</th>
@@ -643,12 +709,10 @@
         <div class="row">
             <!--分页文字信息-->
             <div class="col-md-6" id="page_info_area">
-
             </div>
+
             <!--分页条信息-->
             <div class="col-md-6" id="page_nav_area">
-
-
             </div>
         </div>
 
