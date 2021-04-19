@@ -60,7 +60,7 @@ maven的settings.xml文件配置：
 - URI： /emps
 
 ---
-查询-ajax
+# 查询-ajax
 1. indexl.jsp页面直接发送ajax请求进行员工分页数据的查询
 2. 服务器将查出的数据，以json字符串的形式返回给浏览器
 3. 浏览器收到js字符串，可以使用js对json进行解析，使用js通过dom增删改来改变页面。
@@ -68,8 +68,95 @@ maven的settings.xml文件配置：
 
 ---
 
-新增-逻辑
+
+# 新增-逻辑
 1. 在index.jsp页面点击“新增”
 2. 弹出新增对话框
 3. 去数据库查询部门列表，显示在对话框中
-4. 用户输入数据完成保存
+4. 用户输入数据，校验数据
+	- jquery前端校验（`正则表达式`），ajax用户名重复校验，重要数据（后端校验（**JSR303**），唯一约束）；
+	- 后端校验：①引入JSR包，在对应的bean中的java文件的相应字段上加注解（`@Pattern(regexp="正则表达式", message="自定义信息")`）；②在对应controller中的方法形参中加注解（`@Valid 形参， BindingResult result`）
+
+5. 发送ajax请求时，使用表单序列化传递参数信息（`data: $("#empAddModal form").serialize(),   // 表单序列化`）
+6. 完成保存, 
+
+- URI：
+- /emp/{id}     GET 查询员工
+- /emp     POST保存
+- /emp/{id}     PUT 修改员工
+- /emp{id} DELETE 删除员工
+---
+
+# 修改-逻辑
+1. 点击编辑
+2. 弹出用户修改的模态框（显示用户信息）
+3. 点击更新，完成用户的修改
+
+---
+# 删除-逻辑
+1. 单个删除
+	- URI:/emp{id}
+	- 弹出删除确认框【`if(confirm("确认删除吗？")){。。。}`】
+
+2. 全选/全不选
+
+```javascript
+// 完成全选/全不选功能
+            $("#check_all").click(function () {
+                /**
+                 * attr获取checked是undefined，推荐自定义的属性用attr获取值;
+                 * 像这些原生的dom属性，推荐不用attr获取值，使用prop获取值;
+                 * prop修改和读取dom原生属性的值
+                 */
+                // alert($(this).prop("checked"));
+                $(".check_item").prop("checked", $(this).prop("checked"));
+
+            })
+```
+
+```javascript
+// check_item
+            $(document).on("click", ".check_item", function () {
+                // 判断当前页选中的元素，是否已经被选满
+                if($(".check_item:checked").length==$(".check_item").length){
+
+                    $("#check_all").prop("checked", true);
+
+                }
+            })
+```
+
+```javascript
+// 批量删除
+            $("#emp_delete_all_btn").click(function () {
+
+                var empNames = "";
+                var del_ids = "";
+
+                $.each($(".check_item:checked"), function () {
+                    // 员工姓名字符串
+                    empNames += $(this).parents("tr").find("td:eq(2)").text() + ",";
+                    // 员工id字符串
+                    del_ids += $(this).parents("tr").find("td:eq(1)").text() + "-";
+
+                });
+
+                // 去除多余的“，”号
+                empNames = empNames.substring(0, empNames.length-1);
+                del_ids = del_ids.substring(0, del_ids.length-1);
+
+                if (confirm("确认删除："+empNames+" 吗?")){
+                    // 发送ajax请求
+                    $.ajax( {
+                            url:"<%=basePath%>"+"emp/"+del_ids,
+                            type:"delete",
+                            success:function( data ) {
+                                // data 就是responseText, 是jquery处理后的数据。
+                            }
+                    });
+                }
+            });
+```
+
+---
+# 总结
