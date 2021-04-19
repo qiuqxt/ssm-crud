@@ -26,6 +26,17 @@
 
     <!--引入项目依赖的jar包-->
 
+    <!--JSR303数据校验支持
+    tomcat7及以上的服务器，直接在项目中导入hibernate-validator。
+    tomcat7以下的服务器：el表达式不是新的标准，需要额外的给服务器的lib包中替换新的标准el
+    -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>5.4.1.Final</version>
+    </dependency>
+
+
     <!-- jsp依赖 -->
     <dependency>
       <groupId>javax.servlet.jsp</groupId>
