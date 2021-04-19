@@ -33,6 +33,8 @@
 
         //1.页面加载完成以后，直接去发送一个ajax请求，要到分页数据
         $(function () {
+        <!--开始-->
+
             // 去首页
             to_page(1);
 
@@ -202,7 +204,6 @@
             });
 
 
-
             // 单个删除
             $(document).on("click",".delete_btn", function () {
                 // 1.弹出是否确认删除对话框
@@ -243,7 +244,7 @@
                 if($(".check_item:checked").length==$(".check_item").length){
                     $("#check_all").prop("checked", true);
                 }
-            })
+            });
 
 
             // 批量删除
@@ -264,8 +265,6 @@
                 empNames = empNames.substring(0, empNames.length-1);
                 del_ids = del_ids.substring(0, del_ids.length-1);
 
-                alert(del_ids);
-
                 if (confirm("确认删除："+empNames+" 吗?")){
                     // 发送ajax请求
                     $.ajax( {
@@ -280,12 +279,9 @@
                             }
                     });
                 }
-
             });
 
-
-
-
+        <!--结束-->
         });
 
 
@@ -675,8 +671,8 @@
         <!--按钮-->
         <div class="row">
             <div class="col-md-4 col-md-offset-8">
-                <button type="button" class="btn btn-primary" id="emp_add_modal_btn">新增</button>
-                <button class="btn btn-danger" id="emp_delete_all_btn">删除</button>
+                <button type="button" class="btn btn-primary glyphicon glyphicon-plus" id="emp_add_modal_btn">新增</button>
+                <button class="btn btn-danger glyphicon glyphicon-trash" id="emp_delete_all_btn">删除</button>
             </div>
         </div>
         <!--显示表格数据-->
