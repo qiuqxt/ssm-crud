@@ -24,6 +24,24 @@ public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+
+    /**
+     * 检查用户名是否可用
+     * @param empName
+     * @return
+     */
+    @RequestMapping("/checkUser")
+    @ResponseBody
+    public Msg checkUser(String empName){
+        boolean flag = employeeService.checkUser(empName);
+        if (flag){
+            return Msg.success();
+        }else {
+            return Msg.fail();
+        }
+    }
+
+
     /**
      * 员工保存
      * @return
