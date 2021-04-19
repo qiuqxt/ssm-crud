@@ -60,4 +60,12 @@ public class EmployeeService {
     public void updateEmp(Employee employee) {
         employeeMapper.updateByPrimaryKeySelective(employee);
     }
+
+    /**
+     * 员工删除
+     * @param id
+     */
+    public void deleteEmp(Integer id) {
+        employeeMapper.deleteByPrimaryKey(id);
+    }
 }
