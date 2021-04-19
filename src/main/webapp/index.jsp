@@ -77,10 +77,9 @@
 
             });
 
-
             //保存按钮
             $("#emp_save_btn").click(function () {
-                //1.模态框中填写的表单数据提交给服务器进行保存
+                //模态框中填写的表单数据提交给服务器进行保存
 
                 //1.先对要提交给服务器的数据进行校验
                 if(!validate_add_form()){
@@ -89,13 +88,11 @@
 
                 //1.判断之前的ajax用户名校验是否成功，失败则return false
                 if ($(this).attr("ajax-va")=="error"){
-
                     //清空模态框表单数据
                     $("#emp_add_form")[0].reset();
 
                     return false;
                 }
-
 
                 // 发送ajax请求保存员工
                 $.ajax( {
@@ -105,24 +102,38 @@
                         dataType:"json",
 
                         success:function( data ) {
-                            // data 就是responseText, 是jquery处理后的数据。
-
-                            //员工保存成功
                             // alert(data.msg);
-                            // 1.关闭模态窗口
-                            $('#empAddModal').modal('hide');
+                            if (data.code==100){
+                                //员工保存成功
+                                // 1.关闭模态窗口
+                                $('#empAddModal').modal('hide');
 
-                            // 清空模态窗口的数据
-                            $("#emp_add_form")[0].reset();
+                                // 清空模态窗口的数据
+                                $("#emp_add_form")[0].reset();
 
-                            // 2.来到最后一页，显示刚才保存的数据
-                            // 发送ajax请求显示最后一页数据即可
-                            to_page(totalRecord);
+                                // 2.来到最后一页，显示刚才保存的数据
+                                // 发送ajax请求显示最后一页数据即可
+                                to_page(totalRecord);
+
+                            }else {
+                                // 显示失败信息
+                                // console.log(data);
+                                // 有哪个错误字段的信息就显示哪个字段的
+                                if (undefined != data.ex.errorFields.email){
+                                    // 显示邮箱错误信息
+                                    show_validate_msg("#email_add_input","error",data.ex.errorFields.email);
+
+                                }
+                                if (undefined != data.ex.errorFields.empName){
+                                    // 显示员工名字的错误信息
+                                    show_validate_msg("#empName_add_input","error",data.ex.errorFields.empName);
+
+                                }
+                            }
                         }
-                    })
+                    });
+            });
 
-
-            })
 
         });
 
